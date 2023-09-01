@@ -1,0 +1,23 @@
+trigger:
+- master
+
+pr:
+- '*'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Docker@2
+  inputs:
+    containerRegistry: 'your-container-registry-connection'  # Replace with your container registry connection
+    repository: 'your-repo-name'  # Replace with your Docker repository name
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
+    tags: |
+      latest
+
+- script: |
+    kubectl apply -f k8s-deployment.yaml
+    kubectl apply -f k8s-service.yaml
+  displayName: 'Deploy to Kubernetes'
